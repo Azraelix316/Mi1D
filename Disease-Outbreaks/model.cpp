@@ -11,13 +11,14 @@ using namespace std;
 //https://pmc.ncbi.nlm.nih.gov/articles/PMC3693038/#:~:text=Because%20the%20number%20of%20initially,(%20N%20%2D%201%20)%20)%20.
 
 double susceptible=1000;
-double infected=1;
+double infected=0;
 double removed=0;
 double deceased=0;
-double exposed=0;
+double lastExposed=0;
+double exposed=1;
 double recovered=0;
 double initial=susceptible;
-double latency=14;
+double latency=21;
 //b*susceptible = how many people can be infected
 //b of 0.0001 = 1 person on first day
 double b=0.0001;
@@ -74,9 +75,9 @@ double R0=b*susceptible*1/u;
 
     //Solution 4: SEIR(D)
         list<double> infectedPast;
-    fout << "susceptible" << "," << "infected" <<","<< "exposed" <<","<<"removed" << ","<< "time" <<"\n";
-    while (infected>0 && counter<1000) {
-        fout << susceptible << "," << infected <<","<< exposed<<","<< removed << "," << counter <<"\n";
+     fout << "susceptible,infected,exposed,recovered,deceased,time" << "\n";
+    while (infected>=0 && counter<1000 ) {
+        fout << susceptible << "," << infected <<","<< exposed<<","<< recovered << "," << deceased << "," <<counter <<"\n";
         if (infectedPast.size()>latency) {
         infected+=infectedPast.front();
         infectedPast.pop_front();
@@ -84,10 +85,13 @@ double R0=b*susceptible*1/u;
      double randomExposed=rand()/32767.00*b*susceptible*infected*2;
        double randomRemoved=rand()/32767.00*u*infected*2;
         susceptible-=randomExposed;
-        double lastExposed=exposed;
-        exposed+=randomExposed;
-        removed+=randomRemoved;
+        exposed+=randomExposed-randomRemoved;
+        recovered+=randomRemoved-m*randomRemoved;
+        deceased+=m*randomRemoved;
         infectedPast.push_back(exposed-lastExposed);
         counter++;
+        lastExposed=exposed;
+        //vaccinations 1/day
+        // susceptible-=1;
     }
 }
