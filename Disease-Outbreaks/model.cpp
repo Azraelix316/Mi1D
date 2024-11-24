@@ -16,6 +16,7 @@ int main() {
 //Solution 1: ODE
 fstream fout;
 fout.open("data.csv",ios::out);
+double R0=b*susceptible*1/u;
         fout << "susceptible" << "," << "infected" <<","<< "removed" << ","<< "time" <<"\n";
     while (susceptible>0 && counter<1000) {
         fout << susceptible << "," << infected <<","<< removed << "," << counter <<"\n";
