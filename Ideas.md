@@ -1,9 +1,9 @@
 # Predictive Models
-Predicting disease outbreaks. <br>
-Modeling the spread of pandemics. <br>
+<em>Predicting disease outbreaks.</em>  <br>
+<em>Modeling the spread of pandemics.</em> <br>
 Predicting patient readmission likelihood. <br>
 Climate change predictions. <br>
-Predicting deforestation trends. <br>
+<strong>Predicting deforestation trends.</strong> <br>
 Forecasting water availability in drought-prone areas. <br>
 Predicting shipping delays in global supply chains. <br>
 Stock market trend prediction. <br>
@@ -53,7 +53,7 @@ Optimizing urban green spaces. <br>
 Optimizing charity resource allocation. <br>
 Designing assembly lines for maximal efficiency. <br>
 # Dynamic Models
-Modeling the spread of pandemics (SIR, SEIR models). <br>
+<em>Modeling the spread of pandemics (SIR, SEIR models).</em> <br>
 Dynamic optimization of power grid operations. <br>
 Modeling traffic flow dynamics. <br>
 Modeling economic growth and recessions. <br>
