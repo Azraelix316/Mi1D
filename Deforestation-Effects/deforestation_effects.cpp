@@ -14,10 +14,15 @@ growth/ppm https://factsonclimate.org/infographics/concentration-warming-relatio
 co2/ppm https://en.wikipedia.org/wiki/Carbon_dioxide_in_Earth%27s_atmosphere#cite_note-16
 tree density https://www.oregonmetro.gov/news/power-trees
 */
+
+//constants
+const double tempPerCo2 = 0.01; // per ppm
+const double co2PerTree = 25; // kg
+const double ppmPerKg = 1 / (7.82e+12);
 int main()
 {
+    //used for data later
     std::fstream fout;
-
     fout.open("data.csv", std::ios::out);
     // inputs in data
     std::fstream fin;
@@ -60,13 +65,12 @@ int main()
             current = 0;
         }
     }
+    //simple trend calculation
     double trend = (treeLoss[1] - treeLoss[0]) / treeLoss.size();
     double intercept = treeLoss[0];
     double co2 = 0;           // ppm
-    double tempPerCo2 = 0.01; // per ppm
     double tempGrowth = 0;
-    double co2PerTree = 25; // kg
-    double ppmPerKg = 1 / (7.82e+12);
+
     fout << "Year,Tree Loss, CO2 Growth,Temperature Growth";
     for (int i = 0; i < 60; i++)
     {
