@@ -20,7 +20,7 @@ The implementations are as follows, with each building off the last:
 All of them give similar graphs and have their own strengths and advantages, and the hope is to get familiar with these models. <br>
 
 ### Analysis
-![Hump-like graph showing infections vs. time](images\disease_outbreaks.png) The data shows a typical epidemic - people get exposed, slowly building up the exposed population, which is then reflected into the infected population. The epidemic peaks, and then goes back down as people recover or die. The model is able to generate a variety of graphs like this, predicting a random outcome that could occur, given infection rates and recovery/mortality rates. This graph is commonly accepted as a "normal" epidemic, and is a great, simple model to explain the progress and stages of an epidemic.
+![Hump-like graph showing infections vs. time](\images\disease_outbreaks.png) The data shows a typical epidemic - people get exposed, slowly building up the exposed population, which is then reflected into the infected population. The epidemic peaks, and then goes back down as people recover or die. The model is able to generate a variety of graphs like this, predicting a random outcome that could occur, given infection rates and recovery/mortality rates. This graph is commonly accepted as a "normal" epidemic, and is a great, simple model to explain the progress and stages of an epidemic.
 
 ### Strengths
 The "best" model is the SEIRD model, so the strengths are mainly on that one. SEIRD is able to model a lot of epidemics, with deaths, exposure, latency times which really increase it's accuracy - but as always, the model depends on a lot on how accurate the data you can feed into it is. It uses a deque to help model exposures and infections, and it still has a lot more features that can be added to improve. My implemenatation is also probabilistic, so you get the variance one would expect from random interactions and infection rates. The most important part is that this model sufficiently demonstrates the "curve" or trajectory that a typical epidemic would take, which is useful to see a variety of effects: for example, an extremely large latency time combined with a high transmission rate like COVID-19.
@@ -38,7 +38,7 @@ The model is extremely simple, just a linear trend, with a lot of unit conversio
 This model will probably be redone when I have a chance to.
 
 ### Analysis
-![Exponential growth of temperature vs. years](images\deforestation_effects.png)
+![Exponential growth of temperature vs. years](\images\deforestation_effects.png)
 The data shows that as deforestation trends continue to increase, eventually deforestation will account for a 0.8 celsius increase in global temperatures. An interesting thing to note is that the curve is increasing, which means that the temperature growth will continue to accelerate as demand for land and trees increase - causing accelerated tree loss and deforestation.
 
 
