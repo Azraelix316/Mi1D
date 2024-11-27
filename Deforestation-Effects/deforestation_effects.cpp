@@ -67,17 +67,18 @@ int main()
     }
     //simple trend calculation
     double trend = (treeLoss[1] - treeLoss[0]) / treeLoss.size();
-    double trees = treeLoss[0];
+    double treesLostTotal = treeLoss[0];
     double co2 = 0;           // ppm
     double tempGrowth = 0;
 
     fout << "Year,Tree Loss, CO2 Growth,Temperature Growth";
     for (int i = 0; i < 60; i++)
     {
-        trees += trend;
-        co2 += co2PerTree * trees * ppmPerKg * 2.47105 * 100;
+        treesLostTotal += trend;
+        //2.47105 is hectares to acres
+        co2 += co2PerTree * treesLostTotal * ppmPerKg * 2.47105 * 100;
         tempGrowth = tempPerCo2 * co2;
         fout << "\n"
-             << i + 2023 << "," << trees << "," << co2 << "," << tempGrowth;
+             << i + 2023 << "," << treesLostTotal << "," << co2 << "," << tempGrowth;
     }
 }
