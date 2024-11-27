@@ -7,7 +7,7 @@ The model is extremely simple, just a linear trend, with a lot of unit conversio
 This model will probably be redone when I have a chance to.
 
 ## Analysis
-![A graph showing an exponential increase of predicted temperature growth per year](image.png)
+![Exponential growth of temperature vs. years](image.png)
 The data shows that as deforestation trends continue to increase, eventually deforestation will account for a 0.8 celsius increase in global temperatures. An interesting thing to note is that the curve is increasing, which means that the temperature growth will continue to accelerate as demand for land and trees increase - causing accelerated tree loss and deforestation.
 
 
