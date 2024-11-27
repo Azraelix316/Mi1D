@@ -6,6 +6,11 @@ To be completely honest, this model is gutter trash. Deforestation was a really 
 The model is extremely simple, just a linear trend, with a lot of unit conversions to calculate the CO2 emissions, temperature growth, and the tree loss. It outputs a predicted temperature growth due to deforestation for 60 years.
 This model will probably be redone when I have a chance to.
 
+## Analysis
+![A graph showing an exponential increase of predicted temperature growth per year](image.png)
+The data shows that as deforestation trends continue to increase, eventually deforestation will account for a 0.8 celsius increase in global temperatures. An interesting thing to note is that the curve is increasing, which means that the temperature growth will continue to accelerate as demand for land and trees increase - causing accelerated tree loss and deforestation.
+
+
 ## Strengths
 The model is extremely simple, able to run quickly and have multiple extra features. The simplicity also helps with accuracy, as it's very hard to mess up the simple unit conversions. The model is also able to extrapolate from the predictions what the actual "hard" effects are - temperature growth and CO2 increases. It is very good at showing the effects.
 Other than that, this model has barely any other strengths.
