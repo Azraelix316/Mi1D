@@ -19,7 +19,19 @@ double residuals(vector<vector<string>> data, vector<double> coefficients,
     }
     return residual;
 }
-
+vector<double> run(vector<vector<string>> data, vector<double> coefficients,
+                   int dvColumn, vector<int> ivColumn) {
+    vector<double> results;
+    for (int j = 0; j < data.size(); j++) {
+        double current = 0;
+        for (int i = 0; i < coefficients.size() - 1; i++) {
+            current += coefficients[i] * stod(data[j][ivColumn[i]]);
+        }
+        current += coefficients[coefficients.size()];
+        results.push_back(current);
+    }
+    return results;
+}
 int main() {
     const int stepSize = 1;
     int dvColumn;
@@ -35,6 +47,8 @@ int main() {
         cout << "IV Data Column Number " << i << " is? ";
         cin >> ivColumn;
     }
+    fstream fout;
+    fout.open("results.csv",ios::out);
     fstream fin;
     fin.open("data.csv", ios::in);
     // data collection
@@ -122,9 +136,9 @@ int main() {
     }
 
     cout << "testing";
-    fin.open("test.csv",ios::in); 
-    //second file input
-   while (getline(fin, line, '\n')) {
+    fin.open("test.csv", ios::in);
+    // second file input
+    while (getline(fin, line, '\n')) {
         stringstream s(line);
         // read every column and store it into col
         while (getline(s, col, ',')) {
@@ -138,5 +152,9 @@ int main() {
         data.push_back(curr);
         // pushes the vector into a 2d array data
         curr.clear();
+    }
+    vector<double> results= run(data, coefficients, dvColumn, ivColumns);
+    for (int i=0;i<results.size();i++) {
+    fout << results[i] << "\n";
     }
 }
