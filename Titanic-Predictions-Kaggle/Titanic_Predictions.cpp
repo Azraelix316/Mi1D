@@ -15,7 +15,7 @@ double residuals(vector<vector<string>> data, vector<double> coefficients,
             current += coefficients[i] * stod(data[j][ivColumn[i]]);
         }
         current += coefficients[coefficients.size()];
-        residual += pow(stod(data[j][dvColumn]) - current, 2);
+        residual += pow(stod(data[j][dvColumn]) - round(current), 2);
     }
     return residual;
 }
@@ -32,7 +32,11 @@ vector<double> run(vector<vector<string>> data, vector<double> coefficients,
     for (int j = 0; j < data.size(); j++) {
         double current = 0;
         for (int i = 0; i < coefficients.size() - 1; i++) {
+            if (ivColumn[i]>0) {
             current += coefficients[i] * stod(data[j][ivColumn[i]-1]);
+            } else {
+            current += coefficients[i] * stod(data[j][ivColumn[i]]);  
+            }
         }
         current += coefficients[coefficients.size()];
         results.push_back(current);
@@ -48,7 +52,7 @@ int main() {
     cin >> coefficientSize;
     cout << "DV Column? ";
     cin >> dvColumn;
-    vector<double> coefficients(coefficientSize, 0.0);
+    vector<double> coefficients{0,-0.0757621,0,0,0.915181,0.00102656,-0.00103682,-0.100251,0,0.00171644,0};
     vector<int> ivColumns;
     for (int i = 1; i < coefficientSize; i++) {
         int currentIV;
@@ -72,7 +76,11 @@ int main() {
             if (!col.empty() && is_number(col)) {
                 curr.push_back(col);
             } else {
+                if (col=="female") {
+                curr.push_back("1");
+                } else {
                 curr.push_back("0");
+                }            
             }
         }
         data.push_back(curr);
@@ -91,7 +99,7 @@ int main() {
     for (int i = 0; i < data.size(); i++) {
         rGuess += pow(stod(data[i][dvColumn]) - average, 2);
     }
-    while (trainingSpeed > 0.000001) {
+    while (trainingSpeed > 0.000005) {
         improvement = true;
         while (improvement) {
             improvement = false;
@@ -158,7 +166,11 @@ int main() {
             if (!col.empty()&& is_number(col)) {
                 curr.push_back(col);
             } else {
+                if (col=="female") {
+                curr.push_back("1");
+                } else {
                 curr.push_back("0");
+                }
             }
         }
         data.push_back(curr);
@@ -166,7 +178,6 @@ int main() {
         curr.clear();
     }
     //also prints the passenger number
-    cout << ivColumns[0];
     vector<double> results= run(data, coefficients, dvColumn, ivColumns);
     for (int i=0;i<results.size();i++) {
     fout << data[i][0] << ",";
