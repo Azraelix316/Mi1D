@@ -160,9 +160,10 @@ int main() {
             cout << coefficients[i] << ",";
         }
         // r-squared
-        cout << "\n R-squared: " << 1 - (residuals(data, coefficients, dvColumn, ivColumns) / rGuess);
+        cout << "\nR-squared: " << 1 - (residuals(data, coefficients, dvColumn, ivColumns) / rGuess);
         // halves training speed, to increase precision
         trainingSpeed = trainingSpeed / 2.0;
+        cout << "\nCutoff: " << cutoff;
         cout << "\n"
              << "Training Speed:" << trainingSpeed << "\n";
     }
