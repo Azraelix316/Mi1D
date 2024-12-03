@@ -18,6 +18,7 @@ double residuals(vector<vector<string>> data, vector<double> coefficients,int dv
     }
     return residual;
 }
+
 int main() {
     const int stepSize = 1;
     int dvColumn;
@@ -31,8 +32,6 @@ int main() {
     cin >> ivColumn;
     vector<double> coefficients(coefficientSize, 0.0);
     vector<int> ivColumns(coefficientSize, 0.0);
-    fstream fout;
-    fout.open("data.csv",ios::app);
     fstream fin;
     fin.open("data.csv", ios::in);
     // data collection
@@ -57,15 +56,6 @@ int main() {
         double lastssqr;
         bool improvement=true;
         double trainingSpeed=1;
-    double average=0;
-    for (int i=0;i<data.size();i++) {
-    average+=stod(data[i][dvColumn]);
-    }
-    average*=1/data.size();
-    double rGuess=0;
-    for (int i=0;i<data.size();i++) {
-    rGuess+=pow(stod(data[i][dvColumn])-average,2);
-    }
 while (trainingSpeed>0.00001) {
     improvement=true;
     while (improvement) {
@@ -103,7 +93,6 @@ while (trainingSpeed>0.00001) {
     for (int i=0;i<coefficients.size();i++) {
     cout << coefficients[i]<< ",";
     } 
-    cout << "\n" << "R-squared " << 1-(residuals(data,coefficients,dvColumn,ivColumn)/rGuess);
     //halves training speed, to increase precision
     trainingSpeed=trainingSpeed/2.0;
     cout << "\n"<< "Training Speed:" << trainingSpeed << "\n";
