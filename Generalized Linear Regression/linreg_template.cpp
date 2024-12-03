@@ -32,6 +32,13 @@ vector<double> run(vector<vector<string>> data, vector<double> coefficients,
     }
     return results;
 }
+//function to check if a string is a number
+bool is_number(string line)
+{
+    char* p;
+    strtol(line.c_str(), &p, 10);
+    return *p == 0;
+}
 int main() {
     const int stepSize = 1;
     int dvColumn;
@@ -60,7 +67,7 @@ int main() {
         // read every column and store it into col
         while (getline(s, col, ',')) {
             // add all the column data into a vector
-            if (!col.empty()) {
+            if (!col.empty() && is_number(col)) {
                 curr.push_back(col);
             } else {
                 curr.push_back("0");
@@ -134,7 +141,9 @@ int main() {
         trainingSpeed = trainingSpeed / 2.0;
         cout << "\n" << "Training Speed:" << trainingSpeed << "\n";
     }
-
+    data.clear();
+    curr.clear();
+    col="0";
     cout << "testing";
     fin.open("test.csv", ios::in);
     // second file input
