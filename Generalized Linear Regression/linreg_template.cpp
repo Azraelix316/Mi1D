@@ -58,7 +58,7 @@ int main() {
         double lastssqr;
         bool improvement=true;
         double trainingSpeed=1;
-while (trainingSpeed>0.00001) {
+while (trainingSpeed>0.01) {
     improvement=true;
     while (improvement) {
         improvement=false;
@@ -99,5 +99,8 @@ while (trainingSpeed>0.00001) {
     trainingSpeed=trainingSpeed/2.0;
     cout << "\n"<< "Training Speed:" << trainingSpeed << "\n";
 }
+
+
+
 
 }
