@@ -5,9 +5,11 @@
 #include <sstream>
 #include <vector>
 using namespace std;
-//modified linreg template
-double residuals(vector<vector<string>> data, vector<double> coefficients,
-                 int dvColumn, vector<int> ivColumn) {
+double cutoff = 0.6;
+// modified
+// linreg
+// template
+double residuals(vector<vector<string>> data, vector<double> coefficients, int dvColumn, vector<int> ivColumn) {
     double residual = 0;
     for (int j = 0; j < data.size(); j++) {
         double current = 0;
@@ -15,27 +17,36 @@ double residuals(vector<vector<string>> data, vector<double> coefficients,
             current += coefficients[i] * stod(data[j][ivColumn[i]]);
         }
         current += coefficients[coefficients.size()];
-        residual += pow(stod(data[j][dvColumn]) - round(current), 2);
+        if (current > cutoff) {
+            current = 1;
+        } else {
+            current = 0;
+        }
+        residual += pow(stod(data[j][dvColumn]) - current, 2);
     }
     return residual;
 }
-//function to check if a string is a number
-bool is_number(string line)
-{
+// function
+// to
+// check
+// if a
+// string
+// is a
+// number
+bool is_number(string line) {
     char* p;
     strtol(line.c_str(), &p, 10);
     return *p == 0;
 }
-vector<double> run(vector<vector<string>> data, vector<double> coefficients,
-                   int dvColumn, vector<int> ivColumn) {
+vector<double> run(vector<vector<string>> data, vector<double> coefficients, int dvColumn, vector<int> ivColumn) {
     vector<double> results;
     for (int j = 0; j < data.size(); j++) {
         double current = 0;
         for (int i = 0; i < coefficients.size() - 1; i++) {
-            if (ivColumn[i]>0) {
-            current += coefficients[i] * stod(data[j][ivColumn[i]-1]);
+            if (ivColumn[i] > 0) {
+                current += coefficients[i] * stod(data[j][ivColumn[i] - 1]);
             } else {
-            current += coefficients[i] * stod(data[j][ivColumn[i]]);  
+                current += coefficients[i] * stod(data[j][ivColumn[i]]);
             }
         }
         current += coefficients[coefficients.size()];
@@ -52,7 +63,7 @@ int main() {
     cin >> coefficientSize;
     cout << "DV Column? ";
     cin >> dvColumn;
-    vector<double> coefficients{0,-0.0757621,0,0,0.915181,0.00102656,-0.00103682,-0.100251,0,0.00171644,0};
+    vector<double> coefficients{0, -0.0587852, 0, 0, 0.915181, 0.00102656, -0.00103682, -0.100251, 0, 0.00171644, 0};
     vector<int> ivColumns;
     for (int i = 1; i < coefficientSize; i++) {
         int currentIV;
@@ -61,10 +72,11 @@ int main() {
         ivColumns.push_back(currentIV);
     }
     fstream fout;
-    fout.open("results.csv",ios::out);
+    fout.open("results.csv", ios::out);
     fstream fin;
     fin.open("train.csv", ios::in);
-    // data collection
+    // data
+    // collection
     string row, temp, line, col;
     vector<vector<string>> data;
     vector<string> curr;
@@ -76,11 +88,11 @@ int main() {
             if (!col.empty() && is_number(col)) {
                 curr.push_back(col);
             } else {
-                if (col=="female") {
-                curr.push_back("1");
+                if (col == "female") {
+                    curr.push_back("1");
                 } else {
-                curr.push_back("0");
-                }            
+                    curr.push_back("0");
+                }
             }
         }
         data.push_back(curr);
@@ -109,10 +121,8 @@ int main() {
                 coefficients[j] += trainingSpeed;
                 // modifies current coefficient up or down until it can't
                 // improve
-                while (lastssqr >
-                       residuals(data, coefficients, dvColumn, ivColumns)) {
-                    lastssqr =
-                        residuals(data, coefficients, dvColumn, ivColumns);
+                while (lastssqr > residuals(data, coefficients, dvColumn, ivColumns)) {
+                    lastssqr = residuals(data, coefficients, dvColumn, ivColumns);
                     coefficients[j] += trainingSpeed;
                     // flags an improvement
                     improvement = true;
@@ -121,55 +131,62 @@ int main() {
                 coefficients[j] -= trainingSpeed;
                 lastssqr = residuals(data, coefficients, dvColumn, ivColumns);
                 coefficients[j] -= trainingSpeed;
-                while (lastssqr >
-                       residuals(data, coefficients, dvColumn, ivColumns)) {
-                    lastssqr =
-                        residuals(data, coefficients, dvColumn, ivColumns);
+                while (lastssqr > residuals(data, coefficients, dvColumn, ivColumns)) {
+                    lastssqr = residuals(data, coefficients, dvColumn, ivColumns);
                     coefficients[j] -= trainingSpeed;
                     // flags an improvement
                     improvement = true;
                 }
                 // keeping coefficient the same
                 coefficients[j] += trainingSpeed;
-
+                cutoff -= 0.01;
+                while (lastssqr > residuals(data, coefficients, dvColumn, ivColumns)) {
+                    lastssqr = residuals(data, coefficients, dvColumn, ivColumns);
+                    cutoff -= 0.01;
+                }
+                cutoff += 0.01;
+                while (lastssqr > residuals(data, coefficients, dvColumn, ivColumns)) {
+                    lastssqr = residuals(data, coefficients, dvColumn, ivColumns);
+                    cutoff += 0.01;
+                }
                 // ups training speed
                 trainingSpeed += trainingSpeed * 0.01;
             }
         }
         // displays current coefficients and error, used to plug into excel to
         // get r-squared, etc.
-        cout << "\n"
-             << residuals(data, coefficients, dvColumn, ivColumns) << "\n";
+        cout << "\n" << residuals(data, coefficients, dvColumn, ivColumns) << "\n";
         for (int i = 0; i < coefficients.size(); i++) {
             cout << coefficients[i] << ",";
         }
         // r-squared
-        cout << "\n R-squared: "
-             << 1 - (residuals(data, coefficients, dvColumn, ivColumns) /
-                     rGuess);
+        cout << "\n R-squared: " << 1 - (residuals(data, coefficients, dvColumn, ivColumns) / rGuess);
         // halves training speed, to increase precision
         trainingSpeed = trainingSpeed / 2.0;
-        cout << "\n" << "Training Speed:" << trainingSpeed << "\n";
+        cout << "\n"
+             << "Training Speed:" << trainingSpeed << "\n";
     }
     data.clear();
     curr.clear();
-    col="0";
+    col = "0";
     cout << "testing";
     fstream fin2;
     fin2.open("test.csv", ios::in);
-    // second file input
+    // second
+    // file
+    // input
     while (getline(fin2, line, '\n')) {
         stringstream s(line);
         // read every column and store it into col
         while (getline(s, col, ',')) {
             // add all the column data into a vector
-            if (!col.empty()&& is_number(col)) {
+            if (!col.empty() && is_number(col)) {
                 curr.push_back(col);
             } else {
-                if (col=="female") {
-                curr.push_back("1");
+                if (col == "female") {
+                    curr.push_back("1");
                 } else {
-                curr.push_back("0");
+                    curr.push_back("0");
                 }
             }
         }
@@ -177,10 +194,19 @@ int main() {
         // pushes the vector into a 2d array data
         curr.clear();
     }
-    //also prints the passenger number
-    vector<double> results= run(data, coefficients, dvColumn, ivColumns);
-    for (int i=0;i<results.size();i++) {
-    fout << data[i][0] << ",";
-    fout << round(results[i]) << "\n";
+    // also
+    // prints
+    // the
+    // passenger
+    // number
+    vector<double> results = run(data, coefficients, dvColumn, ivColumns);
+    for (int i = 0; i < results.size(); i++) {
+        fout << data[i][0] << ",";
+        if (results[i] > cutoff) {
+            fout << 1;
+        } else {
+            fout << 0;
+        }
+        fout << "\n";
     }
 }
