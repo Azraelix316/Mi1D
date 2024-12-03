@@ -5,13 +5,13 @@
 #include <sstream>
 #include <vector>
 using namespace std;
-
-double residuals(vector<vector<string>> data, vector<double> coefficients,int dvColumn, vector<int> ivColumn) {
+//slightly modified
+double residuals(vector<vector<string>> data, vector<double> coefficients,int dvColumn, int ivColumn) {
     double residual=0;
     for (int j = 0; j < data.size(); j++) {
         double current=0;
         for (int i = 0; i < coefficients.size()-1; i++) {
-        current+=coefficients[i]*stod(data[j][ivColumn[i]]);
+        current+=coefficients[i]*stod(data[j][ivColumn+i]);
         }
         current+=coefficients[coefficients.size()];
         residual+=pow(stod(data[j][dvColumn])-current,2);
@@ -28,14 +28,12 @@ int main() {
     cin >> coefficientSize;
     cout << "DV Column? ";
     cin >> dvColumn;
+    cout << "IV Data Begins? ";
+    cin >> ivColumn;
     vector<double> coefficients(coefficientSize, 0.0);
     vector<int> ivColumns(coefficientSize, 0.0);
-    for (int i=1;i<coefficientSize;i++) {
-    cout << "IV Data Column Number " << i << " is? ";
-    cin >> ivColumn;
-    }
     fstream fin;
-    fin.open("data.csv", ios::in);
+    fin.open("train.csv", ios::in);
     // data collection
     string row, temp, line, col;
     vector<vector<string>> data;
@@ -64,21 +62,21 @@ while (trainingSpeed>0.00001) {
         improvement=false;
     for (int j=0;j<coefficients.size();j++) {
         //calculates the last sum of squares to compare
-        lastssqr=residuals(data,coefficients,dvColumn,ivColumns);
+        lastssqr=residuals(data,coefficients,dvColumn,ivColumn);
         coefficients[j]+=trainingSpeed;
         //modifies current coefficient up or down until it can't improve
-        while (lastssqr>residuals(data,coefficients,dvColumn,ivColumns)) {
-        lastssqr=residuals(data,coefficients,dvColumn,ivColumns);
+        while (lastssqr>residuals(data,coefficients,dvColumn,ivColumn)) {
+        lastssqr=residuals(data,coefficients,dvColumn,ivColumn);
         coefficients[j]+=trainingSpeed;
         //flags an improvement
         improvement=true;
         }
         //keeps coefficient the same
         coefficients[j]-=trainingSpeed;
-        lastssqr=residuals(data,coefficients,dvColumn,ivColumns); 
+        lastssqr=residuals(data,coefficients,dvColumn,ivColumn); 
         coefficients[j]-=trainingSpeed; 
-        while (lastssqr>residuals(data,coefficients,dvColumn,ivColumns)) {
-        lastssqr=residuals(data,coefficients,dvColumn,ivColumns);
+        while (lastssqr>residuals(data,coefficients,dvColumn,ivColumn)) {
+        lastssqr=residuals(data,coefficients,dvColumn,ivColumn);
         coefficients[j]-=trainingSpeed;
         //flags an improvement
         improvement=true;
@@ -91,7 +89,7 @@ while (trainingSpeed>0.00001) {
     }  
     } 
     //displays current coefficients and error, used to plug into excel to get r-squared, etc.
-    cout << "\n" << residuals(data,coefficients,dvColumn,ivColumns) << "\n";
+    cout << "\n" << residuals(data,coefficients,dvColumn,ivColumn) << "\n";
     for (int i=0;i<coefficients.size();i++) {
     cout << coefficients[i]<< ",";
     } 
