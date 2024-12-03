@@ -99,8 +99,4 @@ while (trainingSpeed>0.01) {
     trainingSpeed=trainingSpeed/2.0;
     cout << "\n"<< "Training Speed:" << trainingSpeed << "\n";
 }
-
-
-
-
 }
