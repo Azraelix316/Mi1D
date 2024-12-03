@@ -58,7 +58,16 @@ int main() {
         double lastssqr;
         bool improvement=true;
         double trainingSpeed=1;
-while (trainingSpeed>0.01) {
+        double average=0;
+        for (int i=0;i<data.size();i++) {
+        average+=stod(data[i][dvColumn]);
+        }
+        average*=1/data.size();
+        double rGuess;
+        for (int i=0;i<data.size();i++) {
+        rGuess+=pow(stod(data[i][dvColumn])-average,2);
+        }
+while (trainingSpeed>0.005) {
     improvement=true;
     while (improvement) {
         improvement=false;
@@ -95,8 +104,13 @@ while (trainingSpeed>0.01) {
     for (int i=0;i<coefficients.size();i++) {
     cout << coefficients[i]<< ",";
     } 
+    //r-squared
+    cout << "\n R-squared: " << 1-(residuals(data,coefficients,dvColumn,ivColumns)/rGuess);
     //halves training speed, to increase precision
     trainingSpeed=trainingSpeed/2.0;
     cout << "\n"<< "Training Speed:" << trainingSpeed << "\n";
 }
+
+cout << "testing";
+
 }
