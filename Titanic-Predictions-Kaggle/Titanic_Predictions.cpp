@@ -67,7 +67,7 @@ int main() {
     cin >> coefficientSize;
     cout << "DV Column? ";
     cin >> dvColumn;
-    vector<double> coefficients(coefficientSize,0.0);
+    vector<double> coefficients{0,0,0,0,0.596907,0.00763411,-0.00310245,-0.00143884,0,0.000238604,0};
     vector<int> ivColumns;
     for (int i = 1; i < coefficientSize; i++) {
         int currentIV;
@@ -109,7 +109,7 @@ int main() {
     }
     double lastssqr;
     bool improvement = true;
-    double trainingSpeed = 1;
+    double trainingSpeed = 0.001;
     double average = 0;
     for (int i = 0; i < data.size(); i++) {
         average += stod(data[i][dvColumn]);
@@ -119,7 +119,7 @@ int main() {
     for (int i = 0; i < data.size(); i++) {
         rGuess += pow(stod(data[i][dvColumn]) - average, 2);
     }
-    while (trainingSpeed > 0.000005) {
+    while (trainingSpeed > 0.0000001) {
         improvement = true;
         while (improvement) {
             improvement = false;
