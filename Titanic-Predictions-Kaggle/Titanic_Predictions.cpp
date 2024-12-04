@@ -9,7 +9,7 @@
 #include <vector>
 using namespace std;
 double cutoff = 0.6;
-double penaltyCoefficient = 1.0;
+double penaltyCoefficient = 0.0;
 // modified
 // linreg
 // template
