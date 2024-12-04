@@ -1,15 +1,20 @@
+#include <algorithm>
 #include <cmath>
+#include <ctime>
 #include <fstream>
 #include <iostream>
 #include <ostream>
+#include <random>
 #include <sstream>
 #include <vector>
 using namespace std;
 double cutoff = 0.6;
-double penaltyCoefficient=0.1;
+double penaltyCoefficient = 1.0;
 // modified
 // linreg
 // template
+//13 coefficients, 2,3,4,5,7,8,9,10,12,15,16,17
+//0,-0.716648,0,0.189354,0,1.06152,-0.000701105,0.000918566,-3.97018e-07,0,0.11847,-0.0422502,0.285485,
 double residuals(vector<vector<string>> data, vector<double> coefficients, int dvColumn, vector<int> ivColumn) {
     double residual = 0;
     for (int j = 0; j < data.size(); j++) {
@@ -17,7 +22,7 @@ double residuals(vector<vector<string>> data, vector<double> coefficients, int d
         for (int i = 0; i < coefficients.size() - 1; i++) {
             current += coefficients[i] * stod(data[j][ivColumn[i]]);
         }
-        current += coefficients[coefficients.size()];
+        current += coefficients[coefficients.size() - 1];
         if (current > cutoff) {
             current = 1;
         } else {
@@ -25,11 +30,12 @@ double residuals(vector<vector<string>> data, vector<double> coefficients, int d
         }
         residual += pow(stod(data[j][dvColumn]) - current, 2);
     }
-    for (int i=0;i<coefficients.size();i++) {
-    residual+=penaltyCoefficient*pow(coefficients[i],2);
+    for (int i = 0; i < coefficients.size(); i++) {
+        residual += penaltyCoefficient * pow(coefficients[i], 2);
     }
     return residual;
 }
+
 // function
 // to
 // check
@@ -53,7 +59,7 @@ vector<double> run(vector<vector<string>> data, vector<double> coefficients, int
                 current += coefficients[i] * stod(data[j][ivColumn[i]]);
             }
         }
-        current += coefficients[coefficients.size()];
+        current += coefficients[coefficients.size() - 1];
         results.push_back(current);
     }
     return results;
@@ -67,14 +73,15 @@ int main() {
     cin >> coefficientSize;
     cout << "DV Column? ";
     cin >> dvColumn;
-    vector<double> coefficients{0,0,0,0,0.596907,0.00763411,-0.00310245,-0.00143884,0,0.000238604,0};
-    vector<int> ivColumns;
-    for (int i = 1; i < coefficientSize; i++) {
-        int currentIV;
-        cout << "IV Data Column Number " << i << " is? ";
-        cin >> currentIV;
-        ivColumns.push_back(currentIV);
-    }
+    vector<double> coefficients{0,-0.716648,0,0.189354,0,1.06152,-0.000701105,0.000918566,-3.97018e-07,0,0.11847,-0.0422502,0.285485};
+    vector<int> ivColumns{2,3,4,5,7,8,9,10,12,15,16,17};
+
+    // for (int i = 1; i < coefficientSize; i++) {
+    //     int currentIV;
+    //     cout << "IV Data Column Number " << i << " is? ";
+    //     cin >> currentIV;
+    //     ivColumns.push_back(currentIV);
+    // }
     fstream fout;
     fout.open("results.csv", ios::out);
     fstream fin;
@@ -92,14 +99,10 @@ int main() {
             if (!col.empty() && is_number(col)) {
                 curr.push_back(col);
             } else {
-                if (!col.empty()) {
                 if (col == "female") {
                     curr.push_back("1");
                 } else {
                     curr.push_back("0");
-                }
-                } else {
-                curr.push_back("1");
                 }
             }
         }
@@ -109,7 +112,7 @@ int main() {
     }
     double lastssqr;
     bool improvement = true;
-    double trainingSpeed = 0.001;
+    double trainingSpeed = 0.0000001;
     double average = 0;
     for (int i = 0; i < data.size(); i++) {
         average += stod(data[i][dvColumn]);
@@ -119,7 +122,7 @@ int main() {
     for (int i = 0; i < data.size(); i++) {
         rGuess += pow(stod(data[i][dvColumn]) - average, 2);
     }
-    while (trainingSpeed > 0.0000001) {
+    while (trainingSpeed > 0.0000000001) {
         improvement = true;
         while (improvement) {
             improvement = false;
@@ -129,6 +132,16 @@ int main() {
                 coefficients[j] += trainingSpeed;
                 // modifies current coefficient up or down until it can't
                 // improve
+                cutoff -= trainingSpeed;
+                while (lastssqr > residuals(data, coefficients, dvColumn, ivColumns)) {
+                    lastssqr = residuals(data, coefficients, dvColumn, ivColumns);
+                    cutoff -= trainingSpeed;
+                }
+                cutoff += trainingSpeed;
+                while (lastssqr > residuals(data, coefficients, dvColumn, ivColumns)) {
+                    lastssqr = residuals(data, coefficients, dvColumn, ivColumns);
+                    cutoff += trainingSpeed;
+                }
                 while (lastssqr > residuals(data, coefficients, dvColumn, ivColumns)) {
                     lastssqr = residuals(data, coefficients, dvColumn, ivColumns);
                     coefficients[j] += trainingSpeed;
@@ -147,16 +160,6 @@ int main() {
                 }
                 // keeping coefficient the same
                 coefficients[j] += trainingSpeed;
-                cutoff -= 0.01;
-                while (lastssqr > residuals(data, coefficients, dvColumn, ivColumns)) {
-                    lastssqr = residuals(data, coefficients, dvColumn, ivColumns);
-                    cutoff -= 0.01;
-                }
-                cutoff += 0.01;
-                while (lastssqr > residuals(data, coefficients, dvColumn, ivColumns)) {
-                    lastssqr = residuals(data, coefficients, dvColumn, ivColumns);
-                    cutoff += 0.01;
-                }
                 // ups training speed
                 trainingSpeed += trainingSpeed * 0.01;
             }
