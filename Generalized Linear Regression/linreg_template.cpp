@@ -89,6 +89,9 @@ int main() {
     for (int i = 0; i < data.size(); i++) {
         rGuess += pow(stod(data[i][dvColumn]) - average, 2);
     }
+    for (int i=0;i<data.size();i++) {
+    cout << data[i][0] << data[i][1] << "\n";
+    }
     while (trainingSpeed > 0.005) {
         improvement = true;
         while (improvement) {
@@ -145,9 +148,10 @@ int main() {
     curr.clear();
     col="0";
     cout << "testing";
-    fin.open("test.csv", ios::in);
+    fstream fin2;
+    fin2.open("test.csv", ios::in);
     // second file input
-    while (getline(fin, line, '\n')) {
+    while (getline(fin2, line, '\n')) {
         stringstream s(line);
         // read every column and store it into col
         while (getline(s, col, ',')) {

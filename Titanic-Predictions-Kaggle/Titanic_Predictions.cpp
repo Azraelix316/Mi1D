@@ -6,6 +6,7 @@
 #include <vector>
 using namespace std;
 double cutoff = 0.6;
+double penaltyCoefficient=0.1;
 // modified
 // linreg
 // template
@@ -23,6 +24,9 @@ double residuals(vector<vector<string>> data, vector<double> coefficients, int d
             current = 0;
         }
         residual += pow(stod(data[j][dvColumn]) - current, 2);
+    }
+    for (int i=0;i<coefficients.size();i++) {
+    residual+=penaltyCoefficient*pow(coefficients[i],2);
     }
     return residual;
 }
@@ -63,7 +67,7 @@ int main() {
     cin >> coefficientSize;
     cout << "DV Column? ";
     cin >> dvColumn;
-    vector<double> coefficients{0, -0.0587852, 0, 0, 0.915181, 0.00102656, -0.00103682, -0.100251, 0, 0.00171644, 0};
+    vector<double> coefficients(coefficientSize,0.0);
     vector<int> ivColumns;
     for (int i = 1; i < coefficientSize; i++) {
         int currentIV;
@@ -88,10 +92,14 @@ int main() {
             if (!col.empty() && is_number(col)) {
                 curr.push_back(col);
             } else {
+                if (!col.empty()) {
                 if (col == "female") {
                     curr.push_back("1");
                 } else {
                     curr.push_back("0");
+                }
+                } else {
+                curr.push_back("1");
                 }
             }
         }
@@ -173,9 +181,7 @@ int main() {
     cout << "testing";
     fstream fin2;
     fin2.open("test.csv", ios::in);
-    // second
-    // file
-    // input
+    // second file input
     while (getline(fin2, line, '\n')) {
         stringstream s(line);
         // read every column and store it into col
@@ -195,11 +201,7 @@ int main() {
         // pushes the vector into a 2d array data
         curr.clear();
     }
-    // also
-    // prints
-    // the
-    // passenger
-    // number
+    // also prints the passenger number
     vector<double> results = run(data, coefficients, dvColumn, ivColumns);
     for (int i = 0; i < results.size(); i++) {
         fout << data[i][0] << ",";
