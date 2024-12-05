@@ -8,13 +8,13 @@
 #include <sstream>
 #include <vector>
 using namespace std;
-double cutoff = 0.588584;
+double cutoff = 0.6;
 double penaltyCoefficient = 1.0;
 // modified
 // linreg
 // template
-//13 coefficients, 2,3,4,5,7,8,9,10,12,15,16,17
-//0,-0.716648,0,0.189354,0,1.06152,-0.000701105,0.000918566,-3.97018e-07,0,0.11847,-0.0422502,0.285485,
+// 13 coefficients, 2,3,4,5,7,8,9,10,12,15,16,17
+// 0,-0.716648,0,0.189354,0,1.06152,-0.000701105,0.000918566,-3.97018e-07,0,0.11847,-0.0422502,0.285485,
 double residuals(vector<vector<string>> data, vector<double> coefficients, int dvColumn, vector<int> ivColumn) {
     double residual = 0;
     for (int j = 0; j < data.size(); j++) {
@@ -70,9 +70,10 @@ int main() {
     cin >> coefficientSize;
     cout << "DV Column? ";
     cin >> dvColumn;
-    vector<double> coefficients{0,-0.723929,0,0.189354,0,1.06152,-0.000701105,0.000918566,-3.97018e-07,0,0.11847,-0.106372,0,0.285485};
-    vector<int> ivColumns{2,3,4,5,7,8,9,10,12,15,16,17,19};
-
+    vector<double> coefficients{0, -0.723929, 0, 0.189354, 0, 1.06152, -0.000701105, 0.000918566, -3.97018e-07, 0, 0.11847, -0.106372, 0, 0.285485};
+    vector<int> ivColumns{2, 3, 4, 5, 7, 8, 9, 10, 12, 15, 16, 17, 19};
+//0,-0.723929,0,0.229544,0,1.06152,-0.000701105,0.000918566,-3.97018e-07,0,0.145048,-0.106372,0.112683,0.285485,
+//0.6 r-squared 0.61
     // for (int i = 1; i < coefficientSize; i++) {
     //     int currentIV;
     //     cout << "IV Data Column Number " << i << " is? ";
@@ -126,7 +127,6 @@ int main() {
             for (int j = 0; j < coefficients.size(); j++) {
                 // calculates the last sum of squares to compare
                 lastssqr = residuals(data, coefficients, dvColumn, ivColumns);
-                coefficients[j] += trainingSpeed;
                 // modifies current coefficient up or down until it can't
                 // improve
                 cutoff -= trainingSpeed;
@@ -139,6 +139,8 @@ int main() {
                     lastssqr = residuals(data, coefficients, dvColumn, ivColumns);
                     cutoff += trainingSpeed;
                 }
+                lastssqr = residuals(data, coefficients, dvColumn, ivColumns);
+                coefficients[j] += trainingSpeed;
                 while (lastssqr > residuals(data, coefficients, dvColumn, ivColumns)) {
                     lastssqr = residuals(data, coefficients, dvColumn, ivColumns);
                     coefficients[j] += trainingSpeed;
@@ -202,11 +204,11 @@ int main() {
         curr.clear();
     }
     fstream coefficientsOut;
-    coefficientsOut.open("coefficients.csv",ios::app);
-    for (int i=0;i<coefficientSize;i++) {
-    coefficientsOut << coefficients[i] << ",";
+    coefficientsOut.open("coefficients.csv", ios::app);
+    for (int i = 0; i < coefficientSize; i++) {
+        coefficientsOut << coefficients[i] << ",";
     }
-    coefficientsOut<<"\n Cutoff: " <<cutoff<<"\n";
+    coefficientsOut << "\n Cutoff: " << cutoff << "\n";
     // also prints the passenger number
     vector<double> results = run(data, coefficients, dvColumn, ivColumns);
     for (int i = 0; i < results.size(); i++) {
