@@ -70,8 +70,8 @@ int main() {
     cin >> coefficientSize;
     cout << "DV Column? ";
     cin >> dvColumn;
-    vector<double> coefficients{0,-0.716648,0,0.189354,0,1.06152,-0.000701105,0.000918566,-3.97018e-07,0,0.11847,-0.0422502,0.285485};
-    vector<int> ivColumns{2,3,4,5,7,8,9,10,12,15,16,17};
+    vector<double> coefficients{0,-0.716648,0,0.189354,0,1.06152,-0.000701105,0.000918566,-3.97018e-07,0,0.11847,-0.0422502,0,0,0.285485};
+    vector<int> ivColumns{2,3,4,5,7,8,9,10,12,15,16,17,18,19};
 
     // for (int i = 1; i < coefficientSize; i++) {
     //     int currentIV;
@@ -109,7 +109,7 @@ int main() {
     }
     double lastssqr;
     bool improvement = true;
-    double trainingSpeed = 0.0000001;
+    double trainingSpeed = 0.1;
     double average = 0;
     for (int i = 0; i < data.size(); i++) {
         average += stod(data[i][dvColumn]);
