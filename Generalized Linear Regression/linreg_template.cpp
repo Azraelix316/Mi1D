@@ -14,7 +14,7 @@ double residuals(vector<vector<string>> data, vector<double> coefficients,
         for (int i = 0; i < coefficients.size() - 1; i++) {
             current += coefficients[i] * stod(data[j][ivColumn[i]]);
         }
-        current += coefficients[coefficients.size()];
+        current += coefficients[coefficients.size()-1];
         residual += pow(stod(data[j][dvColumn]) - current, 2);
     }
     return residual;
@@ -27,7 +27,7 @@ vector<double> run(vector<vector<string>> data, vector<double> coefficients,
         for (int i = 0; i < coefficients.size() - 1; i++) {
             current += coefficients[i] * stod(data[j][ivColumn[i]]);
         }
-        current += coefficients[coefficients.size()];
+        current += coefficients[coefficients.size()-1];
         results.push_back(current);
     }
     return results;
@@ -39,6 +39,7 @@ bool is_number(string line)
     strtol(line.c_str(), &p, 10);
     return *p == 0;
 }
+
 int main() {
     const int stepSize = 1;
     int dvColumn;
@@ -67,7 +68,7 @@ int main() {
         // read every column and store it into col
         while (getline(s, col, ',')) {
             // add all the column data into a vector
-            if (!col.empty() && is_number(col)) {
+            if (!col.empty()) {
                 curr.push_back(col);
             } else {
                 curr.push_back("0");
