@@ -9,7 +9,7 @@
 #include <vector>
 using namespace std;
 double cutoff = 0.6;
-double penaltyCoefficient = 0.0;
+double penaltyCoefficient = 1.0;
 // modified
 // linreg
 // template
@@ -29,9 +29,6 @@ double residuals(vector<vector<string>> data, vector<double> coefficients, int d
             current = 0;
         }
         residual += pow(stod(data[j][dvColumn]) - current, 2);
-    }
-    for (int i = 0; i < coefficients.size(); i++) {
-        residual += penaltyCoefficient * pow(coefficients[i], 2);
     }
     return residual;
 }
