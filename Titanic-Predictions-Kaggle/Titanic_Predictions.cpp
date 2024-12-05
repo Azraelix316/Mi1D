@@ -8,7 +8,7 @@
 #include <sstream>
 #include <vector>
 using namespace std;
-double cutoff = 0.6;
+double cutoff = 0.588584;
 double penaltyCoefficient = 1.0;
 // modified
 // linreg
@@ -70,8 +70,8 @@ int main() {
     cin >> coefficientSize;
     cout << "DV Column? ";
     cin >> dvColumn;
-    vector<double> coefficients{0,-0.716648,0,0.189354,0,1.06152,-0.000701105,0.000918566,-3.97018e-07,0,0.11847,-0.0422502,0,0,0.285485};
-    vector<int> ivColumns{2,3,4,5,7,8,9,10,12,15,16,17,18,19};
+    vector<double> coefficients{0,-0.723929,0,0.189354,0,1.06152,-0.000701105,0.000918566,-3.97018e-07,0,0.11847,-0.106372,0,0.285485};
+    vector<int> ivColumns{2,3,4,5,7,8,9,10,12,15,16,17,19};
 
     // for (int i = 1; i < coefficientSize; i++) {
     //     int currentIV;
@@ -201,6 +201,12 @@ int main() {
         // pushes the vector into a 2d array data
         curr.clear();
     }
+    fstream coefficientsOut;
+    coefficientsOut.open("coefficients.csv",ios::app);
+    for (int i=0;i<coefficientSize;i++) {
+    coefficientsOut << coefficients[i] << ",";
+    }
+    coefficientsOut<<"\n Cutoff: " <<cutoff<<"\n";
     // also prints the passenger number
     vector<double> results = run(data, coefficients, dvColumn, ivColumns);
     for (int i = 0; i < results.size(); i++) {
