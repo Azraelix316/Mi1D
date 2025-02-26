@@ -8,8 +8,9 @@
 #include <sstream>
 #include <vector>
 using namespace std;
-double cutoff = 0.6;
+double cutoff = 0.5;
 double penaltyCoefficient = 1.0;
+const bool train=false;
 // modified
 // linreg
 // template
@@ -23,13 +24,29 @@ double residuals(vector<vector<string>> data, vector<double> coefficients, int d
             current += coefficients[i] * stod(data[j][ivColumn[i]]);
         }
         current += coefficients[coefficients.size() - 1];
+        residual += pow(stod(data[j][dvColumn]) - current, 2);
+    }
+    // for (int i = 0; i < coefficients.size(); i++) {
+    //     residual += penaltyCoefficient * pow(coefficients[i], 2);
+    // }
+    return residual;
+}
+
+double cutoffed(vector<vector<string>> data, vector<double> coefficients, int dvColumn, vector<int> ivColumn) {
+    double residual = 0;
+    for (int j = 0; j < data.size(); j++) {
+        double current = 0;
+        for (int i = 0; i < coefficients.size() - 1; i++) {
+            current += coefficients[i] * stod(data[j][ivColumn[i]]);
+        }
+        current += coefficients[coefficients.size() - 1];
         if (current > cutoff) {
             current = 1;
         } else {
             current = 0;
         }
         residual += pow(stod(data[j][dvColumn]) - current, 2);
-    }
+    }     
     return residual;
 }
 
@@ -70,16 +87,26 @@ int main() {
     cin >> coefficientSize;
     cout << "DV Column? ";
     cin >> dvColumn;
-    vector<double> coefficients{0, -0.723929, 0, 0.189354, 0, 1.06152, -0.000701105, 0.000918566, -3.97018e-07, 0, 0.11847, -0.106372, 0, 0.285485};
-    vector<int> ivColumns{2, 3, 4, 5, 7, 8, 9, 10, 12, 15, 16, 17, 19};
-//0,-0.723929,0,0.229544,0,1.06152,-0.000701105,0.000918566,-3.97018e-07,0,0.145048,-0.106372,0.112683,0.285485,
-//0.6 r-squared 0.61
-    // for (int i = 1; i < coefficientSize; i++) {
-    //     int currentIV;
-    //     cout << "IV Data Column Number " << i << " is? ";
-    //     cin >> currentIV;
-    //     ivColumns.push_back(currentIV);
-    // }
+    //8 coefficients
+    vector<double> coefficients{0.0887838,0.260064,0.264753,0,0,0.510364,0,-0.00187225,-0.031855,-0.0121758,0,0.000658244,0,0,0.051845,0.0196972,0.105509,0.169544,0,0.0202757};
+    vector<int> ivColumns{3,4,5,6,7,8,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22};
+    //4,5,8,10,11,16,17,18
+    //8 good
+    //4,5 good
+    //5 very good, 8 very good
+    //bias good
+    //age useless??
+    //16,17,18
+    //10,11 good (large values)
+    //16 coefficients
+//0,-0.723929,0,0.229544,0,1.06152,-0.000701105,0.00766481,-3.97018e-07,0,0.126742,-0.106372,0.112683,0.285485
+// //0.6 cutoff r-squared 0.538
+//     for (int i = 1; i < coefficientSize; i++) {
+//         int currentIV;
+//         cout << "IV Data Column Number " << i << " is? ";
+//         cin >> currentIV;
+//         ivColumns.push_back(currentIV);
+//     }
     fstream fout;
     fout.open("results.csv", ios::out);
     fstream fin;
@@ -110,35 +137,23 @@ int main() {
     }
     double lastssqr;
     bool improvement = true;
-    double trainingSpeed = 0.1;
-    double average = 0;
-    for (int i = 0; i < data.size(); i++) {
-        average += stod(data[i][dvColumn]);
-    }
-    average *= 1 / data.size();
-    double rGuess;
-    for (int i = 0; i < data.size(); i++) {
-        rGuess += pow(stod(data[i][dvColumn]) - average, 2);
-    }
-    while (trainingSpeed > 0.0000000001) {
+    double trainingSpeed = 1;
+    // double average = 0;
+    // for (int i = 0; i < data.size(); i++) {
+    //     average += stod(data[i][dvColumn]);
+    // }
+    // average *= 1 / data.size();
+    // double rGuess;
+    // for (int i = 0; i < data.size(); i++) {
+    //     rGuess += pow(stod(data[i][dvColumn]) - average, 2);
+    // }
+    double rGuess=342;
+    while (trainingSpeed > 0.00001 && train==true) {
         improvement = true;
         while (improvement) {
             improvement = false;
             for (int j = 0; j < coefficients.size(); j++) {
-                // calculates the last sum of squares to compare
-                lastssqr = residuals(data, coefficients, dvColumn, ivColumns);
-                // modifies current coefficient up or down until it can't
-                // improve
-                cutoff -= trainingSpeed;
-                while (lastssqr > residuals(data, coefficients, dvColumn, ivColumns)) {
-                    lastssqr = residuals(data, coefficients, dvColumn, ivColumns);
-                    cutoff -= trainingSpeed;
-                }
-                cutoff += trainingSpeed;
-                while (lastssqr > residuals(data, coefficients, dvColumn, ivColumns)) {
-                    lastssqr = residuals(data, coefficients, dvColumn, ivColumns);
-                    cutoff += trainingSpeed;
-                }
+            
                 lastssqr = residuals(data, coefficients, dvColumn, ivColumns);
                 coefficients[j] += trainingSpeed;
                 while (lastssqr > residuals(data, coefficients, dvColumn, ivColumns)) {
@@ -163,12 +178,23 @@ int main() {
                 trainingSpeed += trainingSpeed * 0.01;
             }
         }
+        double bestCutoff=0;
+        double bestError=1000;
+        for (int i=0;i<100;i++) {
+        cutoff=i*0.01;
+        if (cutoffed(data, coefficients, dvColumn, ivColumns)<=bestError) {
+        bestCutoff=cutoff;
+        bestError=cutoffed(data, coefficients, dvColumn, ivColumns);
+        }
+        }
+        cutoff=bestCutoff;
         // displays current coefficients and error, used to plug into excel to
         // get r-squared, etc.
-        cout << "\n" << residuals(data, coefficients, dvColumn, ivColumns) << "\n";
+        cout << "\nError:" << residuals(data, coefficients, dvColumn, ivColumns) << "\n";
         for (int i = 0; i < coefficients.size(); i++) {
             cout << coefficients[i] << ",";
         }
+        cout << "\nCutoffed:" << cutoffed(data, coefficients, dvColumn, ivColumns);
         // r-squared
         cout << "\nR-squared: " << 1 - (residuals(data, coefficients, dvColumn, ivColumns) / rGuess);
         // halves training speed, to increase precision
@@ -177,10 +203,23 @@ int main() {
         cout << "\n"
              << "Training Speed:" << trainingSpeed << "\n";
     }
+    cout << "Cutoff training... \n";
+
+        double bestCutoff=0;
+        double bestError=1000;
+        for (int i=0;i<400;i++) {
+        cutoff=i*0.025;
+        if (cutoffed(data, coefficients, dvColumn, ivColumns)<=bestError) {
+        bestCutoff=cutoff;
+        bestError=cutoffed(data, coefficients, dvColumn, ivColumns);
+        }
+        }
+        cutoff=bestCutoff;
     data.clear();
     curr.clear();
+
     col = "0";
-    cout << "testing";
+    cout << "Running...";
     fstream fin2;
     fin2.open("test.csv", ios::in);
     // second file input
