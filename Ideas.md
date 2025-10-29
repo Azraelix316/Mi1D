@@ -21,7 +21,7 @@ Forecasting e-commerce sales trends. <br>
 Predicting cultural trends using network science. <br>
 # Linear Models
 Optimizing hospital resource allocation. <br>
-Traffic flow optimization. <br>
+<em>Traffic flow optimization.</em> <br>
 Designing dynamic pricing for ride-sharing platforms. <br>
 Optimizing airline schedules. <br>
 Portfolio optimization under uncertainty. <br>
